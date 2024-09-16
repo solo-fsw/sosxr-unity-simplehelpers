@@ -1,5 +1,4 @@
 using System.Collections;
-using SOSXR.EnhancedLogger;
 using UnityEngine;
 
 
@@ -13,7 +12,7 @@ public class UnloadUnusedAssets : MonoBehaviour
     {
         if (m_autoUnloadInterval <= 0)
         {
-            this.Info("Interval is 0 or less, so not auto-looping the unloading of unused assets");
+            Debug.Log("Interval is 0 or less, so not auto-looping the unloading of unused assets");
 
             return;
         }
@@ -41,7 +40,7 @@ public class UnloadUnusedAssets : MonoBehaviour
     public void UnloadUnusedAssetsFromGame()
     {
         Resources.UnloadUnusedAssets();
-        this.Success("Unloaded unused assets");
+        Debug.Log("Unloaded unused assets");
     }
 
 

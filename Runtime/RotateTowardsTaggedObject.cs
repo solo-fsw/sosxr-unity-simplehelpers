@@ -1,11 +1,9 @@
-using SOSXR.EditorTools;
-using SOSXR.EnhancedLogger;
 using UnityEngine;
 
 
 public class RotateTowardsTaggedObject : MonoBehaviour
 {
-    [TagSelector] [SerializeField] private string m_tagToRotateTo = "MainCamera";
+    [SerializeField] private string m_tagToRotateTo = "MainCamera";
 
     [SerializeField] private Vector3Int m_rotationOffset = new(0, 180, 0);
     private readonly int _everyXframes = 10;
@@ -20,7 +18,7 @@ public class RotateTowardsTaggedObject : MonoBehaviour
         set
         {
             m_rotationOffset = value;
-            this.Info("Set RotationOffset to", value);
+            Debug.Log("Set RotationOffset to" + value);
         }
     }
 
@@ -67,7 +65,7 @@ public class RotateTowardsTaggedObject : MonoBehaviour
             if (directionToTarget == Vector3.zero)
             {
                 directionToTarget = new Vector3(.01f, .01f, .01f);
-                this.Info("Set directionToTarget manually because it was at zero");
+                Debug.Log("Set directionToTarget manually because it was at zero");
             }
 
             var lookRotation = Quaternion.LookRotation(directionToTarget);

@@ -1,4 +1,3 @@
-using SOSXR.EnhancedLogger;
 using UnityEngine;
 
 
@@ -17,7 +16,7 @@ namespace SOSXR.SimpleHelpers
             if (m_doNotDestroyOnLoad)
             {
                 DontDestroyOnLoad(gameObject);
-                this.Info("This GameObject will not be destroyed on scene load");
+                Debug.Log("This GameObject will not be destroyed on scene load");
             }
         }
     }

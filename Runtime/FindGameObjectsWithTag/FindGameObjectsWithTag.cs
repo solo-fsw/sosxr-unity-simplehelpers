@@ -1,15 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
-using SOSXR.EditorTools;
-using SOSXR.EnhancedLogger;
 using UnityEngine;
 
 
 public class FindGameObjectsWithTag : MonoBehaviour
 {
-    [SerializeField] [TagSelector] private string m_tag;
+    [SerializeField] private string m_tag;
 
-    [DisableEditing] [SerializeField] private List<GameObject> m_gameObjects;
+    [Header("Do not edit in Inspector")] [SerializeField] private List<GameObject> m_gameObjects;
 
 
     public List<GameObject> GameObjects
@@ -22,6 +20,6 @@ public class FindGameObjectsWithTag : MonoBehaviour
     private void Start()
     {
         GameObjects = GameObject.FindGameObjectsWithTag(m_tag).ToList();
-        this.Info($"Found {GameObjects.Count} GameObjects with tag {m_tag}");
+        Debug.Log($"Found {GameObjects.Count} GameObjects with tag {m_tag}");
     }
 }

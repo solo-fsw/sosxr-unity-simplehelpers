@@ -1,10 +1,7 @@
 {
   "name": "SOSXR.SimpleHelpers",
   "rootNamespace": "SOSXR.SimpleHelpers",
-  "references": [
-    "GUID:eb1034696cce04f25a4a7d38d2e0e5a4",
-    "GUID:7dbfc0c0f47f74b9780a4e8bbf532ae8"
-  ],
+  "references": [],
   "includePlatforms": [],
   "excludePlatforms": [],
   "allowUnsafeCode": false,

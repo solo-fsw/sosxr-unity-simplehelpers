@@ -1,4 +1,3 @@
-using SOSXR.EnhancedLogger;
 using UnityEngine;
 
 
@@ -67,7 +66,7 @@ public abstract class OnTriggerBase : MonoBehaviour
             return true;
         }
 
-        this.Error("Not all colliders are found");
+        Debug.LogError("Not all colliders are found");
 
         return false;
     }
@@ -80,7 +79,7 @@ public abstract class OnTriggerBase : MonoBehaviour
             return true;
         }
 
-        this.Error("We need exactly 1 collider to be marked as Trigger");
+        Debug.LogError("We need exactly 1 collider to be marked as Trigger");
 
         return false;
     }
@@ -98,7 +97,7 @@ public abstract class OnTriggerBase : MonoBehaviour
             return true;
         }
 
-        this.Error("Not enough Rigidbodies for this Trigger to work");
+        Debug.LogError("Not enough Rigidbodies for this Trigger to work");
 
         return false;
     }
@@ -113,7 +112,7 @@ public abstract class OnTriggerBase : MonoBehaviour
 
         if (!Initialised())
         {
-            this.Error("Initalisation has not been successful");
+            Debug.LogError("Initalisation has not been successful");
 
             return;
         }
@@ -135,7 +134,7 @@ public abstract class OnTriggerBase : MonoBehaviour
 
         if (!Initialised())
         {
-            this.Error("Initalisation has not been successful");
+            Debug.LogError("Initalisation has not been successful");
 
             return;
         }
@@ -156,7 +155,7 @@ public abstract class OnTriggerBase : MonoBehaviour
 
         if (!Initialised())
         {
-            this.Error("Initalisation has not been successful");
+            Debug.LogError("Initalisation has not been successful");
 
             return;
         }

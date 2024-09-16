@@ -1,4 +1,3 @@
-using SOSXR.EnhancedLogger;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -30,7 +29,7 @@ namespace SOSXR.SimpleHelpers
                 return;
             }
 
-            this.Error("Cannot find the correct Tagged Target");
+            Debug.LogError("Cannot find the correct Tagged Target");
         }
     }
 }

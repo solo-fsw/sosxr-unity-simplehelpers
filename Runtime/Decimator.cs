@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using SOSXR.EditorTools;
-using SOSXR.EnhancedLogger;
 using UnityEngine;
 
 
@@ -13,7 +11,7 @@ namespace SOSXR.SimpleHelpers
     public class Decimator : MonoBehaviour
     {
         public List<GameObject> ObjectsToDecimate;
-        [BoxRange(0, 100)] public int Percentage = 10;
+        public int Percentage = 10;
 
 
         [ContextMenu(nameof(Decimate))]
@@ -27,7 +25,7 @@ namespace SOSXR.SimpleHelpers
         {
             if (percentage == 0)
             {
-                this.Warning("This makes no sense. Decimate more please");
+                Debug.LogWarning("This makes no sense. Decimate more please");
 
                 return;
             }

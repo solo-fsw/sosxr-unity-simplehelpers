@@ -1,4 +1,3 @@
-using SOSXR.EnhancedLogger;
 using UnityEngine;
 
 
@@ -46,7 +45,7 @@ namespace SOSXR.SimpleHelpers
             }
             else
             {
-                this.Error("ColliderType does not exist");
+                Debug.LogError("ColliderType does not exist");
             }
         }
 

@@ -1,4 +1,3 @@
-using SOSXR.EnhancedLogger;
 using UnityEngine;
 
 
@@ -25,7 +24,7 @@ public class RigidbodySpeedLimiter : MonoBehaviour
     {
         if (m_rigidbody == null)
         {
-            this.Error("No Rigidbody was found");
+            Debug.LogError("No Rigidbody was found");
         }
 
         if (m_limitSpeed == false)

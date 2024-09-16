@@ -1,4 +1,3 @@
-using SOSXR.EnhancedLogger;
 using UnityEngine;
 
 
@@ -25,7 +24,7 @@ namespace SOSXR.SimpleHelpers
         {
             if (CopyFrom.Length != CopyTo.Length)
             {
-                this.Error("We have a problem. Lists are not of equal length");
+                Debug.LogError("We have a problem. Lists are not of equal length");
 
                 enabled = false;
 
@@ -39,7 +38,7 @@ namespace SOSXR.SimpleHelpers
                     continue;
                 }
 
-                this.Error("We have a problem with", CopyFrom[i].name, "and", CopyTo[i].name);
+                Debug.LogError("We have a problem with " + CopyFrom[i].name + " and " + CopyTo[i].name);
 
                 enabled = false;
 

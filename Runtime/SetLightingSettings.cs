@@ -1,4 +1,3 @@
-using SOSXR.EnhancedLogger;
 using UnityEngine;
 
 
@@ -25,7 +24,7 @@ public class SetLightingSettings : MonoBehaviour
     {
         if (m_skyboxMaterial == null)
         {
-            this.Warning("Cannot change the skybox because it's null, it this intentional?");
+            Debug.LogWarning("Cannot change the skybox because it's null, it this intentional?");
 
             return;
         }
@@ -38,7 +37,7 @@ public class SetLightingSettings : MonoBehaviour
     {
         if (m_intensityMultiplier < 0)
         {
-            this.Info("Apparently we're not changing the ambient intensity, since it was set to below 0.");
+            Debug.Log("Apparently we're not changing the ambient intensity, since it was set to below 0.");
 
             return;
         }

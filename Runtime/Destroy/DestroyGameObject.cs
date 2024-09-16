@@ -1,4 +1,3 @@
-using SOSXR.EnhancedLogger;
 using UnityEngine;
 
 
@@ -14,7 +13,7 @@ namespace SOSXR.SimpleHelpers
         {
             if (m_target == null)
             {
-                this.Error(false, "No Gameobject has been set to destroy");
+                Debug.LogError("No Gameobject has been set to destroy");
 
                 return;
             }

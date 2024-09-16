@@ -1,5 +1,4 @@
 using System;
-using SOSXR.EditorTools;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -27,7 +26,7 @@ namespace SOSXR.debugging
         private float _currentTimeScale;
 
         [Tooltip("Is being called whenever the timescale is changed")]
-        [DisableEditing] public UnityAction ChangedTimeScale;
+        [Header("Do not edit in Inspector")] public UnityAction ChangedTimeScale;
 
 
         private void Update()

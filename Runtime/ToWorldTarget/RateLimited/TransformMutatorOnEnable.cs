@@ -1,4 +1,3 @@
-using SOSXR.EditorTools;
 using UnityEngine;
 
 
@@ -16,9 +15,9 @@ namespace SOSXR.SimpleHelpers
         [SerializeField] private Vector3 m_localScale = new(1, 1, 1);
 
         [Header("ORIGINAL")]
-        [SerializeField] [DisableEditing] private Vector3 _oPos;
-        [SerializeField] [DisableEditing] private Quaternion _oRot;
-        [SerializeField] [DisableEditing] private Vector3 _oScale;
+        [SerializeField] [Header("Do not edit in Inspector")] private Vector3 _oPos;
+        [SerializeField] [Header("Do not edit in Inspector")] private Quaternion _oRot;
+        [SerializeField] [Header("Do not edit in Inspector")] private Vector3 _oScale;
 
 
         private void Awake()

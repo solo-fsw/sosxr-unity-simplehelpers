@@ -1,5 +1,4 @@
 using System.Collections;
-using SOSXR.EnhancedLogger;
 using UnityEngine;
 
 
@@ -24,7 +23,7 @@ namespace SOSXR.SimpleHelpers
 
             if (Target == null)
             {
-                this.Error("Cannot find the correct Tagged Target");
+                Debug.LogError("Cannot find the correct Tagged Target");
             }
         }
 

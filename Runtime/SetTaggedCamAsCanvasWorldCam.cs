@@ -1,4 +1,3 @@
-using SOSXR.EditorTools;
 using UnityEngine;
 
 
@@ -7,7 +6,6 @@ namespace SOSXR.SimpleHelpers
     [RequireComponent(typeof(Canvas))]
     public class SetTaggedCamAsCanvasWorldCam : MonoBehaviour
     {
-        [TagSelector]
         [SerializeField] private string m_camTag = "MainCamera";
         private Canvas _canvas;
 

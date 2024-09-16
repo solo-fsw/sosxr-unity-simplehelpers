@@ -1,4 +1,3 @@
-using SOSXR.EnhancedLogger;
 using UnityEngine;
 
 
@@ -15,7 +14,7 @@ namespace SOSXR.SimpleHelpers
         {
             if (m_parentTo.Length != m_toParent.Length)
             {
-                this.Error("We have a problem. Lists are not of equal length");
+                Debug.LogError("We have a problem. Lists are not of equal length");
 
                 enabled = false;
 
@@ -29,7 +28,7 @@ namespace SOSXR.SimpleHelpers
                     continue;
                 }
 
-                this.Error("We have a problem with", m_parentTo[i].name, "and", m_toParent[i].name);
+                Debug.LogError("We have a problem with" + m_parentTo[i].name + " and " + m_toParent[i].name);
 
                 enabled = false;
 

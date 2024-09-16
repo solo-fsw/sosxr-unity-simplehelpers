@@ -1,12 +1,11 @@
-using SOSXR.EditorTools;
 using UnityEngine;
 
 
 public class FindGameObjectWithTagAndCopyTransform : MonoBehaviour
 {
-    [SerializeField] [TagSelector] private string m_tag = "MainCamera";
+    [SerializeField] private string m_tag = "MainCamera";
 
-    [SerializeField] [DisableEditing] private GameObject TaggedGameObject;
+    [SerializeField] [Header("Do not edit in Inspector")] private GameObject TaggedGameObject;
 
     [SerializeField] [Range(1, 10)] private int m_everyXFrames = 3;
     private int _frameCounter;
@@ -29,7 +28,7 @@ public class FindGameObjectWithTagAndCopyTransform : MonoBehaviour
         {
             transform.position = TaggedGameObject.transform.position;
             transform.rotation = TaggedGameObject.transform.rotation;
-            // this.Info("Copied transform from " + TaggedGameObject.name);
+            // Debug.Log("Copied transform from " + TaggedGameObject.name);
         }
 
         _frameCounter = 0;

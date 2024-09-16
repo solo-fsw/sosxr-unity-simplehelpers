@@ -1,6 +1,4 @@
 using System.Collections;
-using SOSXR.EditorTools;
-using SOSXR.EnhancedLogger;
 using UnityEngine;
 
 
@@ -8,7 +6,6 @@ namespace SOSXR.SimpleHelpers
 {
     public class RateLimitedLookAtTaggedTransform : RateLimitedToWorldTargetBase
     {
-        [TagSelector]
         [SerializeField] private string m_targetTag = "MainCamera";
 
 
@@ -29,7 +26,7 @@ namespace SOSXR.SimpleHelpers
                 return;
             }
 
-            this.Error("Cannot find the correct Tagged Target");
+            Debug.LogError("Cannot find the correct Tagged Target");
         }
 
 

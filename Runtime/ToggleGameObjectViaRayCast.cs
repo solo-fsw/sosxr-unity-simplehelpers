@@ -1,4 +1,3 @@
-using SOSXR.EnhancedLogger;
 using UnityEngine;
 
 
@@ -23,20 +22,20 @@ namespace SOSXR.SimpleHelpers
 
                 if (hit.transform.gameObject == m_raycastTarget)
                 {
-                    this.Info("We hit our target!");
+                    Debug.Log("We hit our target!");
                     Debug.DrawRay(ray.origin, ray.direction * hit.distance, Color.green);
                     m_gameObjectToToggle.SetActive(true);
                 }
                 else
                 {
-                    this.Info("We hit something else!");
+                    Debug.Log("We hit something else!");
                     m_gameObjectToToggle.SetActive(false);
                     Debug.DrawRay(ray.origin, ray.direction * hit.distance, Color.blue);
                 }
             }
             else
             {
-                this.Info("We hit nothing!");
+                Debug.Log("We hit nothing!");
                 m_gameObjectToToggle.SetActive(false);
                 Debug.DrawRay(ray.origin, ray.direction * RaycastDistance, Color.red);
                 Hit = new RaycastHit();

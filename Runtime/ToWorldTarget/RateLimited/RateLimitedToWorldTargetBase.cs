@@ -1,5 +1,4 @@
 using System.Collections;
-using SOSXR.EditorTools;
 using UnityEngine;
 
 
@@ -8,7 +7,7 @@ namespace SOSXR.SimpleHelpers
     public abstract class RateLimitedToWorldTargetBase : MonoBehaviour
     {
         [SerializeField] private bool m_requiresTarget = true;
-        [SerializeField] [BoxRange(0.001f, 1f)] protected float m_inverseRepeatRate = 0.1f;
+        [SerializeField] protected float m_inverseRepeatRate = 0.1f;
 
         private Coroutine _coroutine;
         protected Transform Target;

@@ -1,12 +1,10 @@
 using System;
-using SOSXR.EditorTools;
-using SOSXR.EnhancedLogger;
 using UnityEngine;
 
 
 public class TaggedRenderersToggler : MonoBehaviour
 {
-    [SerializeField] [TagSelector] private string m_tag;
+    [SerializeField] private string m_tag;
     [SerializeField] private bool m_startDisabled;
 
     private Renderer[] _renderers = Array.Empty<Renderer>();
@@ -19,7 +17,7 @@ public class TaggedRenderersToggler : MonoBehaviour
 
         if (_taggedObject == null)
         {
-            this.Info("No object with tag", m_tag, "found.");
+            Debug.Log("No object with tag " + m_tag + " found.");
 
             return;
         }
@@ -34,7 +32,7 @@ public class TaggedRenderersToggler : MonoBehaviour
 
         if (_renderers == null || _renderers.Length == 0)
         {
-            this.Info("No renderers found on object with tag", m_tag, ".");
+            Debug.Log("No renderers found on object with tag " + m_tag);
 
             return;
         }

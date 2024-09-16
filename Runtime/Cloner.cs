@@ -1,11 +1,10 @@
-using SOSXR.EditorTools;
 using UnityEngine;
 
 
 public class Cloner : MonoBehaviour
 {
     [SerializeField] private GameObject m_prefab;
-    [SerializeField] [DisableEditing] private GameObject m_clonedObject;
+    [SerializeField] [Header("Do not edit in Inspector")] private GameObject m_clonedObject;
 
 
     public void Clone()

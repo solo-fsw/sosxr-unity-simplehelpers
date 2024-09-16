@@ -1,4 +1,3 @@
-using SOSXR.EnhancedLogger;
 using UnityEngine;
 
 
@@ -32,7 +31,7 @@ public class DisableFrustumCulling : MonoBehaviour
     {
         if (m_camera == null)
         {
-            this.Error("No camera found!");
+            Debug.LogError("No camera found!");
 
             return;
         }

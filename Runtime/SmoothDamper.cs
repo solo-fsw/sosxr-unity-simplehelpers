@@ -1,11 +1,9 @@
-using SOSXR.EditorTools;
-using SOSXR.EnhancedLogger;
 using UnityEngine;
 
 
 public class SmoothDamper : MonoBehaviour
 {
-    [SerializeField] [TagSelector] private string m_targetTag = "Carrot";
+    [SerializeField] private string m_targetTag = "Carrot";
     [SerializeField] private Transform m_followTarget;
     [SerializeField] private bool m_requireMinimumHeight = true;
     [SerializeField] private float m_minimumHeight = 1f;
@@ -33,7 +31,7 @@ public class SmoothDamper : MonoBehaviour
             }
 
             m_followTarget = GameObject.FindWithTag(m_targetTag).transform;
-            this.Success("Found follow target!");
+            Debug.Log("Found follow target!");
         }
     }
 
@@ -42,7 +40,7 @@ public class SmoothDamper : MonoBehaviour
     {
         if (m_followTarget == null)
         {
-            this.Warning("No follow target found!");
+            Debug.LogWarning("No follow target found!");
 
             return;
         }

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using SOSXR.EnhancedLogger;
 using UnityEngine;
 
 
@@ -25,7 +24,7 @@ public class SetColorTo : MonoBehaviour
     private void SetColor()
     {
         m_materials.ForEach(m => m.color = m_color);
-        this.Info("Setting color to", m_color, "on List of Materials");
+        Debug.Log("Setting color to " + m_color + " on List of Materials");
     }
 
 

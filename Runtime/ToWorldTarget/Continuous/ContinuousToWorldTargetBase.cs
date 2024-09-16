@@ -1,4 +1,3 @@
-using SOSXR.EnhancedLogger;
 using UnityEngine;
 
 
@@ -33,7 +32,7 @@ namespace SOSXR.SimpleHelpers
 
         protected virtual void FindTarget()
         {
-            this.Info(nameof(FindTarget));
+            Debug.Log(nameof(FindTarget));
         }
 
 
