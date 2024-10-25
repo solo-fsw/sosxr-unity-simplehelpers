@@ -32,9 +32,9 @@ public class RigidbodySpeedLimiter : MonoBehaviour
             return;
         }
 
-        if (m_rigidbody.velocity.magnitude > m_maxSpeed)
+        if (m_rigidbody.linearVelocity.magnitude > m_maxSpeed)
         {
-            m_rigidbody.velocity = Vector3.Lerp(m_rigidbody.velocity, new Vector3(0, 0, 0), _timer);
+            m_rigidbody.linearVelocity = Vector3.Lerp(m_rigidbody.linearVelocity, new Vector3(0, 0, 0), _timer);
             _timer += Time.fixedDeltaTime;
         }
         else
