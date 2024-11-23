@@ -17,7 +17,7 @@ namespace SOSXR.SimpleHelpers
             }
 
             _canvas = GetComponent<Canvas>();
-            
+
             FindWorldCamera();
         }
 

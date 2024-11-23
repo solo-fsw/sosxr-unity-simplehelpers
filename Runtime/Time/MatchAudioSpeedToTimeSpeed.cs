@@ -14,7 +14,7 @@ namespace SOSXR.debugging
 
         private void Awake()
         {
-            _tcs = FindObjectOfType<TimeControllerScript>();
+            _tcs = FindFirstObjectByType<TimeControllerScript>();
         }
 
 
@@ -36,7 +36,7 @@ namespace SOSXR.debugging
 
         private void HighSpeedAudioEnabler()
         {
-            _sources = FindObjectsOfType<AudioSource>();
+            _sources = FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
 
             foreach (var s in _sources)
             {

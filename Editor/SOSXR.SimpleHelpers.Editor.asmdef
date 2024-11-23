@@ -1,11 +1,12 @@
 {
-  "name": "SOSXR.SimpleHelpers",
-  "rootNamespace": "SOSXR.SimpleHelpers",
+  "name": "SOSXR.SimpleHelpers.Editor",
+  "rootNamespace": "",
   "references": [
-    "GUID:75469ad4d38634e559750d17036d5f7c",
-    "GUID:7dbfc0c0f47f74b9780a4e8bbf532ae8"
+    "GUID:b10555d8f06094b1a82f2f5dd05d80a5"
   ],
-  "includePlatforms": [],
+  "includePlatforms": [
+    "Editor"
+  ],
   "excludePlatforms": [],
   "allowUnsafeCode": false,
   "overrideReferences": false,

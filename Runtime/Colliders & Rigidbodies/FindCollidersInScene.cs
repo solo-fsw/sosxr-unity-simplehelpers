@@ -9,7 +9,7 @@ public class FindCollidersInScene : MonoBehaviour
     [ContextMenu(nameof(FindAllColliders))]
     protected virtual void FindAllColliders()
     {
-        m_allColliders = FindObjectsOfType<Collider>();
+        m_allColliders = FindObjectsByType<Collider>(FindObjectsSortMode.None);
     }
 
 

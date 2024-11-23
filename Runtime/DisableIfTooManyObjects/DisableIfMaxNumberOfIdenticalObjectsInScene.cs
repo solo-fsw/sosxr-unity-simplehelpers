@@ -19,7 +19,7 @@ namespace SOSXR.SimpleHelpers
 
         private bool FoundTooManyObjectsOfSameType<T>(T comp) where T : Object
         {
-            var objectList = FindObjectsOfType<T>();
+            var objectList = FindObjectsByType<T>(FindObjectsSortMode.None);
 
             return objectList.Length > m_maxObjectsAllowed;
         }
