@@ -300,7 +300,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  m_triggerEventOn: 513
+  m_triggerEventOn: 0
   m_secondsToWaitAfterCalling: 0
   m_tagsToCheckAgainst:
   - Finish
