@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEngine;
 
 
-namespace SOSXR.AdditionalUnityEvents.Editor
+namespace SOSXR.SimpleHelpers.Editor
 {
     [CustomEditor(typeof(AdditionalUnityEvent))]
     public class AdditionalUnityEventInspector : UnityEditor.Editor
@@ -15,6 +15,7 @@ namespace SOSXR.AdditionalUnityEvents.Editor
         private SerializedProperty m_initialFireInterval;
         private SerializedProperty m_perIntervalChange;
         private SerializedProperty m_minMax;
+        private SerializedProperty m_eventToFire;
 
 
         private void OnEnable()
@@ -27,34 +28,36 @@ namespace SOSXR.AdditionalUnityEvents.Editor
             m_initialFireInterval = serializedObject.FindProperty("m_initialFireInterval");
             m_perIntervalChange = serializedObject.FindProperty("m_perIntervalChange");
             m_minMax = serializedObject.FindProperty("m_minMax");
+            m_eventToFire = serializedObject.FindProperty("m_eventToFire");
         }
 
 
         public override void OnInspectorGUI()
         {
-            CustomInspectorContent();
+            serializedObject.Update();
+            DrawCustomInspector();
+            serializedObject.ApplyModifiedProperties();
         }
 
 
-        protected void CustomInspectorContent()
+        private void DrawCustomInspector()
         {
-            serializedObject.Update();
-
-            // Get the value of m_triggerEventOn as the enum value
+            // Determine the current value of the trigger event setting
             var triggerEventOnValue = (UnityEventTrigger) m_triggerEventOn.intValue;
 
-            // Display the triggerEventOn field
+            // Display trigger event options
             EditorGUILayout.PropertyField(m_triggerEventOn);
 
-            // Only show autoStart and other settings if VariableIntervalLoop is selected
             if (triggerEventOnValue.HasFlag(UnityEventTrigger.VariableIntervalLoop))
             {
+                // Show VariableIntervalLoop settings
                 EditorGUILayout.PropertyField(m_autoStart);
                 EditorGUILayout.PropertyField(m_initialFireInterval);
                 EditorGUILayout.PropertyField(m_perIntervalChange);
                 EditorGUILayout.PropertyField(m_minMax);
-
-                serializedObject.ApplyModifiedProperties();
+                EditorGUILayout.Space(10);
+                EditorGUILayout.PropertyField(m_eventToFire);
+                DrawButtons();
 
                 return;
             }
@@ -62,12 +65,10 @@ namespace SOSXR.AdditionalUnityEvents.Editor
             if (triggerEventOnValue.HasFlag(UnityEventTrigger.Update) ||
                 triggerEventOnValue.HasFlag(UnityEventTrigger.FixedUpdate) ||
                 triggerEventOnValue.HasFlag(UnityEventTrigger.LateUpdate) ||
-                triggerEventOnValue.HasFlag(UnityEventTrigger.VariableIntervalLoop) ||
                 triggerEventOnValue.HasFlag(UnityEventTrigger.OnCollisionStay) ||
                 triggerEventOnValue.HasFlag(UnityEventTrigger.OnTriggerStay))
             {
-                m_secondsToWaitAfterCalling.floatValue = 0;
-
+                // Disable seconds to wait for the above triggers
                 using (new EditorGUI.DisabledGroupScope(true))
                 {
                     EditorGUILayout.PropertyField(m_secondsToWaitAfterCalling);
@@ -78,7 +79,7 @@ namespace SOSXR.AdditionalUnityEvents.Editor
                 EditorGUILayout.PropertyField(m_secondsToWaitAfterCalling);
             }
 
-            // Show tags only if one of the trigger/collider flags is set
+            // Only show tag check settings for relevant trigger types
             if (triggerEventOnValue.HasFlag(UnityEventTrigger.OnTriggerEnter) ||
                 triggerEventOnValue.HasFlag(UnityEventTrigger.OnTriggerStay) ||
                 triggerEventOnValue.HasFlag(UnityEventTrigger.OnTriggerExit) ||
@@ -89,11 +90,20 @@ namespace SOSXR.AdditionalUnityEvents.Editor
                 EditorGUILayout.PropertyField(m_tagsToCheckAgainst);
             }
 
+            // Show input action setting if the event uses an input action
             if (triggerEventOnValue.HasFlag(UnityEventTrigger.OnInputAction))
             {
                 EditorGUILayout.PropertyField(m_inputAction);
             }
 
+            EditorGUILayout.Space(10);
+            EditorGUILayout.PropertyField(m_eventToFire);
+            DrawButtons();
+        }
+
+
+        private void DrawButtons()
+        {
             if (GUILayout.Button(nameof(AdditionalUnityEvent.FireEvent)))
             {
                 ((AdditionalUnityEvent) target).FireEvent();
@@ -103,8 +113,6 @@ namespace SOSXR.AdditionalUnityEvents.Editor
             {
                 ((AdditionalUnityEvent) target).StopFiring();
             }
-
-            serializedObject.ApplyModifiedProperties();
         }
     }
 }

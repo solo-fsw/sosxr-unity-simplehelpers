@@ -5,5 +5,8 @@ using System;
 public enum TypeOfCollider
 {
     MeshCollider,
-    BoxCollider
+    BoxCollider,
+    SphereCollider,
+    CapsuleCollider,
+    Collider
 }

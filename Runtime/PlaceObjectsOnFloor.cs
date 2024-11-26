@@ -4,6 +4,12 @@ using UnityEngine;
 
 namespace SOSXR.SimpleHelpers
 {
+    /// <summary>
+    ///     This Unity C# script, PlaceObjectsOnFloor, automates the placement of random objects onto a defined floor within
+    ///     the Unity Editor. It allows the user to specify the floor, a list of objects, and other parameters like the number
+    ///     of objects to place, their vertical offset, scale range, and the parent transform for organizing the instantiated
+    ///     objects
+    /// </summary>
     [ExecuteAlways]
     public class PlaceObjectsOnFloor : MonoBehaviour
     {

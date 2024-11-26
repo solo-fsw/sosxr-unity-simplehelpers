@@ -3,6 +3,9 @@ using UnityEngine;
 
 /// <summary>
 ///     As per: https://allenwp.com/blog/2013/12/19/disabling-frustum-culling-on-a-game-object-in-unity/
+///     For performance reasons, avoid using this on large numbers of objects unless necessary.
+///     If the object moves significantly, ensure this script updates the bounds dynamically (currently, it's only set in
+///     Start).
 /// </summary>
 [ExecuteAlways]
 public class DisableFrustumCulling : MonoBehaviour

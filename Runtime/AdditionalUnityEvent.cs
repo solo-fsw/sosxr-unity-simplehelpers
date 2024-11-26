@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Linq;
-using SOSXR.TagSelector;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -10,20 +9,18 @@ using SOSXR.EditorTools;
 #endif
 
 
-namespace SOSXR.AdditionalUnityEvents
+namespace SOSXR.SimpleHelpers
 {
     public class AdditionalUnityEvent : MonoBehaviour
     {
         [SerializeField] private UnityEvent m_eventToFire;
         [SerializeField] private UnityEventTrigger m_triggerEventOn = UnityEventTrigger.Awake;
         [SerializeField] [Range(0f, 60f)] private float m_secondsToWaitAfterCalling = 0f;
-        #if SOSXR_EDITORTOOLS_INSTALLED
         [Tooltip("Tags to check against when using Trigger or Collision events. Leave empty to fire on any tag.")]
-        [SerializeField] [TagSelector] private string[] m_tagsToCheckAgainst = { };
-        #else
-            [Tooltip("Tags to check against when using Trigger or Collision events. Leave empty to fire on any tag.")]
-            [SerializeField] private string[] m_tagsToCheckAgainst = { };
+        #if SOSXR_EDITORTOOLS_INSTALLED
+        [TagSelector]
         #endif
+        [SerializeField] private string[] m_tagsToCheckAgainst = { };
 
         [SerializeField] private InputActionProperty m_inputAction;
 
@@ -32,10 +29,9 @@ namespace SOSXR.AdditionalUnityEvents
         [SerializeField] [Range(0f, 60f)] private float m_perIntervalChange = 0.02f;
 
         #if SOSXR_EDITORTOOLS_INSTALLED
-        [SerializeField] [BoxRange(0f, 60f)] private Vector2 m_minMax = new(0.5f, 2f);
-        #else
-        [SerializeField] private Vector2 m_minMax = new(0.5f, 2f);
+        [BoxRange(0f, 60f)]
         #endif
+        [SerializeField] private Vector2 m_minMax = new(0.5f, 2f);
 
         [Header("Not for editing")]
         [SerializeField] private float m_currentFireInterval;

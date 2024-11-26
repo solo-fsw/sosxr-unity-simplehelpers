@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 
@@ -5,57 +6,77 @@ namespace SOSXR.SimpleHelpers
 {
     public class AddOrRemoveCollider : MonoBehaviour
     {
-        [SerializeField] private TypeOfCollider _colliderType = TypeOfCollider.MeshCollider;
-        private Collider _collider;
+        [SerializeField] private TypeOfCollider m_colliderType;
+        private Collider _currentCollider;
 
 
-        private void Awake()
+        private void CheckForExistingCollider()
         {
-            GameObjectAlreadyHasAttachedCollider();
+            _currentCollider = GetComponent<Collider>();
         }
 
 
-        private bool GameObjectAlreadyHasAttachedCollider()
-        {
-            if (GetComponent<Collider>() == null)
-            {
-                return false;
-            }
-
-            _collider = GetComponent<Collider>();
-
-            return true;
-        }
-
-
+        [ContextMenu(nameof(AddColliderOfType))]
         public void AddColliderOfType()
         {
-            if (GameObjectAlreadyHasAttachedCollider())
+            CheckForExistingCollider();
+
+            if (_currentCollider != null)
             {
-                return;
+                return; // Collider already exists
             }
 
-            if (_colliderType == TypeOfCollider.MeshCollider)
+            _currentCollider = AddCollider(m_colliderType);
+
+            if (_currentCollider != null)
             {
-                _collider = gameObject.AddComponent<MeshCollider>();
-            }
-            else if (_colliderType == TypeOfCollider.BoxCollider)
-            {
-                _collider = gameObject.AddComponent<BoxCollider>();
+                Debug.Log($"Added {m_colliderType} to the GameObject.");
             }
             else
             {
-                Debug.LogError("ColliderType does not exist");
+                Debug.LogError($"Failed to add collider: {m_colliderType}");
             }
         }
 
 
-        public void RemoveCollider()
+        [ContextMenu(nameof(RemoveAnyCollider))]
+        public void RemoveAnyCollider()
         {
-            if (GameObjectAlreadyHasAttachedCollider())
+            CheckForExistingCollider();
+
+            if (_currentCollider != null)
             {
-                Destroy(_collider);
+                if (Application.isPlaying)
+                {
+                    Destroy(_currentCollider);
+                }
+                else
+                {
+                    DestroyImmediate(_currentCollider);
+                }
+
+                _currentCollider = null;
+                Debug.Log($"Removed {m_colliderType} from the GameObject.");
             }
+        }
+
+
+        private Collider AddCollider(TypeOfCollider colliderType)
+        {
+            // Convert the enum to a string and find the corresponding Unity collider type
+            var colliderTypeNameStr = colliderType.ToString();
+            var fullTypeName = "UnityEngine." + colliderTypeNameStr + ", UnityEngine";
+
+            var type = Type.GetType(fullTypeName);
+
+            if (type != null && typeof(Collider).IsAssignableFrom(type))
+            {
+                return gameObject.AddComponent(type) as Collider;
+            }
+
+            Debug.LogError($"Invalid collider type: {colliderTypeNameStr}");
+
+            return null;
         }
     }
 }

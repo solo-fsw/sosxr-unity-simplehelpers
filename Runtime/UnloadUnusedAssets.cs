@@ -2,45 +2,54 @@ using System.Collections;
 using UnityEngine;
 
 
+/// <summary>
+///     Periodically unloads unused assets to free memory.
+/// </summary>
 public class UnloadUnusedAssets : MonoBehaviour
 {
-    [SerializeField] [Range(-1, 60 * 5)] private float m_autoUnloadInterval = 10f;
+    [SerializeField] [Range(0, 300)] private int m_autoUnloadInterval = 0;
     private Coroutine _unloadCoroutine;
 
 
-    private void OnEnable()
+    private void Start()
     {
-        if (m_autoUnloadInterval <= 0)
+        if (m_autoUnloadInterval > 0)
         {
-            Debug.Log("Interval is 0 or less, so not auto-looping the unloading of unused assets");
-
-            return;
+            StartUnloadLoop();
         }
+        else
+        {
+            Debug.Log("Auto-unload disabled due to interval <= 0.");
+        }
+    }
 
+
+    private void StartUnloadLoop()
+    {
         if (_unloadCoroutine != null)
         {
             StopCoroutine(_unloadCoroutine);
         }
 
-        _unloadCoroutine = StartCoroutine(UnloadCR());
+        _unloadCoroutine = StartCoroutine(UnloadLoop());
     }
 
 
-    private IEnumerator UnloadCR()
+    private IEnumerator UnloadLoop()
     {
-        for (;;)
+        while (true)
         {
             yield return new WaitForSeconds(m_autoUnloadInterval);
-            UnloadUnusedAssetsFromGame();
+            UnloadNow();
         }
     }
 
 
-    [ContextMenu(nameof(UnloadUnusedAssetsFromGame))]
-    public void UnloadUnusedAssetsFromGame()
+    [ContextMenu(nameof(UnloadNow))]
+    public void UnloadNow()
     {
         Resources.UnloadUnusedAssets();
-        Debug.Log("Unloaded unused assets");
+        Debug.Log("Unused assets unloaded.");
     }
 
 

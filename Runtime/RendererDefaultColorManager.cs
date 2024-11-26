@@ -1,53 +1,56 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 
 public class RendererDefaultColorManager : MonoBehaviour
 {
-    [SerializeField] private bool m_setDefaultColor;
-    [SerializeField] private Color m_defaultColor = Color.white;
-    [SerializeField] private bool m_changeAlpha = false;
+    [SerializeField] private Renderer[] m_includedRenderers = Array.Empty<Renderer>();
+    [SerializeField] private bool setDefaultColor = false;
+    [SerializeField] private Color defaultColor = Color.white;
+    [SerializeField] private bool changeAlpha = false;
 
 
-    [SerializeField] private List<Renderer> m_excludeColoringRenderers;
-
-    private Renderer[] _renderers = Array.Empty<Renderer>();
-
-
-    private void Awake()
+    private void OnValidate()
     {
-        _renderers = GetComponentsInChildren<Renderer>();
-    }
-
-
-    private void Start()
-    {
-        if (!m_setDefaultColor)
+        if (m_includedRenderers is {Length: > 0})
         {
             return;
         }
 
-        foreach (var rend in _renderers)
-        {
-            if (m_excludeColoringRenderers.Contains(rend))
-            {
-                continue;
-            }
+        m_includedRenderers = GetComponentsInChildren<Renderer>();
+        Debug.Log("RendererDefaultColorManager: Automatically populated includedRenderers with all child renderers.");
+    }
 
-            foreach (var sharedMaterial in rend.sharedMaterials)
+
+    [ContextMenu(nameof(SetDefaultColor))]
+    public void SetDefaultColor()
+    {
+        if (!setDefaultColor)
+        {
+            return;
+        }
+
+        foreach (var rend in m_includedRenderers)
+        {
+            foreach (var material in rend.sharedMaterials)
             {
-                if (!m_changeAlpha)
-                {
-                    var color = m_defaultColor;
-                    color.a = sharedMaterial.color.a;
-                    sharedMaterial.color = color;
-                }
-                else
-                {
-                    sharedMaterial.color = m_defaultColor;
-                }
+                SetMaterialColor(material);
             }
+        }
+    }
+
+
+    private void SetMaterialColor(Material material)
+    {
+        if (changeAlpha)
+        {
+            material.color = defaultColor;
+        }
+        else
+        {
+            var color = defaultColor;
+            color.a = material.color.a;
+            material.color = color;
         }
     }
 }

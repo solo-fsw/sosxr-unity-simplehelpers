@@ -3,47 +3,48 @@ using UnityEngine;
 
 namespace SOSXR.SimpleHelpers
 {
+    /// <summary>
+    ///     Automatically sets the main camera as the world camera for a canvas.
+    /// </summary>
     [RequireComponent(typeof(Canvas))]
     public class SetMainCameraAsCanvasWorldCam : MonoBehaviour
     {
-        [SerializeField] [HideInInspector] private Canvas _canvas;
+        [SerializeField] [HideInInspector] private Canvas canvas;
 
 
         private void OnValidate()
         {
-            if (_canvas != null)
+            if (canvas == null)
             {
-                return;
+                canvas = GetComponent<Canvas>();
             }
 
-            _canvas = GetComponent<Canvas>();
-
-            FindWorldCamera();
+            AssignWorldCamera();
         }
 
 
         private void Awake()
         {
-            FindWorldCamera();
+            AssignWorldCamera();
         }
 
 
         private void Update()
         {
-            FindWorldCamera();
+            AssignWorldCamera();
         }
 
 
-        private void FindWorldCamera()
+        private void AssignWorldCamera()
         {
-            if (_canvas.worldCamera == null && Camera.main != null)
+            if (canvas.worldCamera != null || Camera.main == null)
             {
-                _canvas.worldCamera = Camera.main;
+                enabled = false; // Disable component if no action is needed
 
                 return;
             }
 
-            enabled = false; // Disable this component as soon as we find a camera
+            canvas.worldCamera = Camera.main;
         }
     }
 }

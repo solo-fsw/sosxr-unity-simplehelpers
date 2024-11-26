@@ -1,17 +1,19 @@
 using UnityEngine;
 
 
+/// <summary>
+///     Limits the speed of a Rigidbody by clamping its velocity.
+/// </summary>
 public class RigidbodySpeedLimiter : MonoBehaviour
 {
+    [SerializeField] private Rigidbody m_rigidbody;
     [SerializeField] private bool m_limitSpeed = true;
     [SerializeField] private float m_maxSpeed = 1f;
-
-    [SerializeField] private Rigidbody m_rigidbody;
 
     private float _timer;
 
 
-    private void Awake()
+    private void OnValidate()
     {
         if (m_rigidbody == null)
         {
@@ -22,24 +24,21 @@ public class RigidbodySpeedLimiter : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (m_rigidbody == null)
-        {
-            Debug.LogError("No Rigidbody was found");
-        }
-
-        if (m_limitSpeed == false)
+        if (m_rigidbody == null || !m_limitSpeed)
         {
             return;
         }
 
-        if (m_rigidbody.linearVelocity.magnitude > m_maxSpeed)
+        var velocity = m_rigidbody.linearVelocity;
+
+        if (velocity.magnitude > m_maxSpeed)
         {
-            m_rigidbody.linearVelocity = Vector3.Lerp(m_rigidbody.linearVelocity, new Vector3(0, 0, 0), _timer);
-            _timer += Time.fixedDeltaTime;
+            _timer = Mathf.Min(_timer + Time.fixedDeltaTime, 1f); // Clamping timer to prevent infinite growth
+            m_rigidbody.linearVelocity = Vector3.Lerp(velocity, Vector3.zero, _timer);
+
+            return;
         }
-        else
-        {
-            _timer = 0;
-        }
+
+        _timer = 0f;
     }
 }
