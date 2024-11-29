@@ -10,17 +10,16 @@ namespace SOSXR.SimpleHelpers
         [SerializeField] private GameObject m_target;
 
         // Movement Properties
-        [SerializeField] [Range(0f, 500f)] private float m_velocity = 5f;
+        [SerializeField] [Range(0f, 25f)] private float m_velocity = 5f;
         [SerializeField] [Range(0f, 360f)] private float m_rotationSpeed = 180f;
         [SerializeField] [Range(0f, 10f)] private float m_springForce = 1f;
         [SerializeField] [Range(0f, 1f)] private float m_damping = 0.98f;
 
         // Offset Movement Properties
         [SerializeField] private Vector3 m_offset = Vector3.zero;
-        [SerializeField] private Vector3[] m_bezierPoints = new Vector3[4];
+        [SerializeField] public Vector3[] m_bezierPoints = new Vector3[4];
+        [SerializeField] private Vector3 m_direction = Vector3.forward;
 
-        // Local Space Movement Properties
-        [SerializeField] [Range(0f, 100f)] private float m_localMoveSpeed = 5f;
         [SerializeField] [Range(0f, 100f)] private float m_orbitRadius = 5f;
         [SerializeField] [Range(0f, 100f)] private float m_orbitSpeed = 50f;
         [SerializeField] [Range(0f, 1f)] private float m_amplitude = 0.01f;
@@ -30,10 +29,11 @@ namespace SOSXR.SimpleHelpers
         [SerializeField] [Range(0f, 10f)] private float m_bounceSpeed = 2f;
 
         // Height Constraints
-        [SerializeField] private float m_minimumHeight = 1f;
-        [SerializeField] private float m_maximumHeight = 4f;
-        [SerializeField] private float m_smoothTime = 1.5f;
+        [SerializeField] private Vector2 m_heightConstraints = new(-10f, 10f);
+        [SerializeField] [Range(0f, 5f)] private float m_smoothTime = 1.5f;
 
+        public bool m_bezierLoop = true; 
+        
         private float m_bezierT = 0f;
         private float m_orbitAngle = 0f;
         private float m_time;
@@ -67,8 +67,8 @@ namespace SOSXR.SimpleHelpers
                     LookAtTarget();
 
                     break;
-                case ActionToTake.RotateTowards:
-                    RotateTowards();
+                case ActionToTake.SmoothLookAtTarget:
+                    SmoothLookAtTarget();
 
                     break;
                 case ActionToTake.SmoothMoveTowards:
@@ -80,6 +80,7 @@ namespace SOSXR.SimpleHelpers
 
                     break;
                 case ActionToTake.MoveAlongPath:
+                    break;
                     MoveAlongPath();
 
                     break;
@@ -95,8 +96,8 @@ namespace SOSXR.SimpleHelpers
                     MoveSinusoidally();
 
                     break;
-                case ActionToTake.BounceBackAndForth:
-                    BounceBackAndForth();
+                case ActionToTake.SmoothBounceBackAndForth:
+                    SmoothBounceBackAndForth();
 
                     break;
                 case ActionToTake.MoveWithElasticity:
@@ -115,6 +116,11 @@ namespace SOSXR.SimpleHelpers
         public void ParentTo()
         {
             if (m_target == null)
+            {
+                return;
+            }
+
+            if (transform.parent == m_target.transform)
             {
                 return;
             }
@@ -159,7 +165,7 @@ namespace SOSXR.SimpleHelpers
         }
 
 
-        public void RotateTowards()
+        public void SmoothLookAtTarget()
         {
             if (m_target == null)
             {
@@ -184,30 +190,74 @@ namespace SOSXR.SimpleHelpers
 
         public void MoveByOffset()
         {
-            transform.position += m_offset * Time.deltaTime;
+            transform.position += m_offset * (m_velocity * Time.deltaTime);
         }
 
 
         public void MoveAlongPath()
         {
-            if (m_bezierPoints.Length < 4)
+            if (m_bezierPoints.Length < 4 || m_velocity <= 0)
             {
                 return;
             }
 
-            transform.position = GetBezierPoint(m_bezierPoints, m_bezierT);
-            m_bezierT += m_velocity * Time.deltaTime;
+            // Calculate the total number of segments
+            var segmentCount = (m_bezierPoints.Length - 1) / 3;
 
+            if (segmentCount <= 0)
+            {
+                return;
+            }
+
+            // Determine the current segment based on m_bezierT
+            var segmentT = m_bezierT * segmentCount;
+            var currentSegment = Mathf.FloorToInt(segmentT);
+            var localT = segmentT - currentSegment;
+
+            // Clamp to avoid out-of-bounds
+            currentSegment = Mathf.Clamp(currentSegment, 0, segmentCount - 1);
+
+            // Get the control points for the current segment
+            var startPointIndex = currentSegment * 3;
+            var segmentPoints = new Vector3[4];
+
+            for (var i = 0; i < 4; i++)
+            {
+                segmentPoints[i] = m_bezierPoints[startPointIndex + i];
+            }
+
+            // Update the position based on the current segment
+            transform.position = GetCubicBezierPoint(segmentPoints, localT);
+
+            // Increment m_bezierT
+            m_bezierT += m_velocity * Time.deltaTime / segmentCount;
+
+            // Handle end of path
             if (m_bezierT > 1f)
             {
-                m_bezierT = 0f;
+                if (m_bezierLoop)
+                {
+                    m_bezierT = 0f; // Loop back to the start
+                }
+                else
+                {
+                    m_bezierT = 1f; // Clamp to the end
+                    transform.position = GetCubicBezierPoint(segmentPoints, 1f); // Ensure position is set to the last point
+                }
             }
+        }
+
+
+        [ContextMenu(nameof(ResetBezier))]
+        public void ResetBezier()
+        {
+            m_bezierT = 0f;
         }
 
 
         public void MoveInLocalSpace()
         {
-            transform.Translate(Vector3.forward * (m_localMoveSpeed * Time.deltaTime), Space.Self);
+            transform.Translate(m_direction * (m_velocity * Time.deltaTime), Space.Self);
         }
 
 
@@ -239,7 +289,7 @@ namespace SOSXR.SimpleHelpers
         }
 
 
-        public void BounceBackAndForth()
+        public void SmoothBounceBackAndForth()
         {
             transform.position = Vector3.Lerp(transform.position, m_bouncingTowardsEnd ? m_bounceEndPoint : m_bounceStartPoint, m_bounceSpeed * Time.deltaTime);
 
@@ -284,27 +334,32 @@ namespace SOSXR.SimpleHelpers
 
         private Vector3 ConstrainHeight(Vector3 position)
         {
-            if (position.y < m_minimumHeight)
+            if (position.y < m_heightConstraints.x)
             {
-                position.y = m_minimumHeight;
+                position.y = m_heightConstraints.x;
             }
 
-            if (position.y > m_maximumHeight)
+            if (position.y > m_heightConstraints.y)
             {
-                position.y = m_maximumHeight;
+                position.y = m_heightConstraints.y;
             }
 
             return position;
         }
 
 
-        // Bezier Curve Method
-        private Vector3 GetBezierPoint(Vector3[] points, float t)
+        public static Vector3 GetCubicBezierPoint(Vector3[] points, float t)
         {
             var u = 1 - t;
             var tt = t * t;
             var uu = u * u;
-            var p = uu * points[0] + 2 * u * t * points[1] + tt * points[2];
+            var uuu = uu * u;
+            var ttt = tt * t;
+
+            var p = uuu * points[0]; // (1 - t)^3 * P0
+            p += 3 * uu * t * points[1]; // 3 * (1 - t)^2 * t * P1
+            p += 3 * u * tt * points[2]; // 3 * (1 - t) * t^2 * P2
+            p += ttt * points[3]; // t^3 * P3
 
             return p;
         }
@@ -316,15 +371,15 @@ namespace SOSXR.SimpleHelpers
         ParentTo,
         SyncTransform,
         MoveTowards,
-        LookAt,
-        RotateTowards,
         SmoothMoveTowards,
+        LookAt,
+        SmoothLookAtTarget,
         MoveByOffset,
         MoveAlongPath,
         MoveInLocalSpace,
         MoveInCircle,
         MoveSinusoidally,
-        BounceBackAndForth,
+        SmoothBounceBackAndForth,
         MoveWithElasticity,
         SmoothFollow
     }

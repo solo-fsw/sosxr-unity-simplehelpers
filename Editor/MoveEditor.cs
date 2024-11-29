@@ -15,7 +15,7 @@ namespace SOSXR.SimpleHelpers.Editor
         private SerializedProperty smoothTimeProp;
         private SerializedProperty offsetProp;
         private SerializedProperty bezierPointsProp;
-        private SerializedProperty localMoveSpeedProp;
+        private SerializedProperty bezierLoopProp;
         private SerializedProperty orbitRadiusProp;
         private SerializedProperty orbitSpeedProp;
         private SerializedProperty amplitudeProp;
@@ -25,14 +25,25 @@ namespace SOSXR.SimpleHelpers.Editor
         private SerializedProperty bounceSpeedProp;
         private SerializedProperty springForceProp;
         private SerializedProperty dampingProp;
-        private SerializedProperty minimumHeightProp;
-        private SerializedProperty maximumHeightProp;
+        private SerializedProperty heightConstraintsProp;
+
+
+        private bool _init;
+
+
+        public SerializedProperty vector3OptionsProp;
 
 
         // Cache properties in OnEnable
         private void OnEnable()
         {
-            // Cache all SerializedProperties
+            if (target == null)
+            {
+                Debug.LogWarning("Target is null. Skipping property initialization.");
+
+                return;
+            }
+
             actionToTakeProp = serializedObject.FindProperty("m_actionToTake");
             targetProp = serializedObject.FindProperty("m_target");
             velocityProp = serializedObject.FindProperty("m_velocity");
@@ -40,7 +51,7 @@ namespace SOSXR.SimpleHelpers.Editor
             smoothTimeProp = serializedObject.FindProperty("m_smoothTime");
             offsetProp = serializedObject.FindProperty("m_offset");
             bezierPointsProp = serializedObject.FindProperty("m_bezierPoints");
-            localMoveSpeedProp = serializedObject.FindProperty("m_localMoveSpeed");
+            bezierLoopProp = serializedObject.FindProperty("m_bezierLoop");
             orbitRadiusProp = serializedObject.FindProperty("m_orbitRadius");
             orbitSpeedProp = serializedObject.FindProperty("m_orbitSpeed");
             amplitudeProp = serializedObject.FindProperty("m_amplitude");
@@ -50,13 +61,87 @@ namespace SOSXR.SimpleHelpers.Editor
             bounceSpeedProp = serializedObject.FindProperty("m_bounceSpeed");
             springForceProp = serializedObject.FindProperty("m_springForce");
             dampingProp = serializedObject.FindProperty("m_damping");
-            minimumHeightProp = serializedObject.FindProperty("m_minimumHeight");
-            maximumHeightProp = serializedObject.FindProperty("m_maximumHeight");
+            heightConstraintsProp = serializedObject.FindProperty("m_heightConstraints");
+
+            _init = true;
+        }
+
+
+        private void OnSceneGUI()
+        {
+            if (!_init || target == null)
+            {
+                return;
+            }
+
+            var move = (Move) target;
+
+            // Ensure ActionToTake is MoveAlongPath and there are enough points
+            if (actionToTakeProp.enumValueIndex != (int) ActionToTake.MoveAlongPath || move.m_bezierPoints == null || move.m_bezierPoints.Length < 4)
+            {
+                return;
+            }
+
+            // Draw the full path by iterating through each segment
+            Handles.color = Color.green;
+            var segmentCount = (move.m_bezierPoints.Length - 1) / 3; // Number of cubic Bezier segments
+            var curveResolution = 20; // Number of points per segment
+
+            for (var segment = 0; segment < segmentCount; segment++)
+            {
+                var startPointIndex = segment * 3;
+
+                // Get the 4 control points for this segment
+                var segmentPoints = new Vector3[4];
+
+                for (var i = 0; i < 4; i++)
+                {
+                    segmentPoints[i] = move.m_bezierPoints[startPointIndex + i];
+                }
+
+                // Draw the curve for this segment
+                for (var i = 0; i < curveResolution; i++)
+                {
+                    var t1 = i / (float) curveResolution;
+                    var t2 = (i + 1) / (float) curveResolution;
+
+                    var point1 = Move.GetCubicBezierPoint(segmentPoints, t1);
+                    var point2 = Move.GetCubicBezierPoint(segmentPoints, t2);
+
+                    Handles.DrawLine(point1, point2);
+                }
+            }
+
+            // Draw control points and the connecting lines
+            Handles.color = Color.cyan;
+
+            for (var i = 0; i < move.m_bezierPoints.Length; i++)
+            {
+                move.m_bezierPoints[i] = Handles.PositionHandle(move.m_bezierPoints[i], Quaternion.identity);
+
+                if (i > 0)
+                {
+                    Handles.DrawLine(move.m_bezierPoints[i - 1], move.m_bezierPoints[i]);
+                }
+            }
+
+            // Save changes
+            if (GUI.changed)
+            {
+                EditorUtility.SetDirty(move);
+            }
         }
 
 
         public override void OnInspectorGUI()
         {
+            if (target == null)
+            {
+                EditorGUILayout.HelpBox("SerializedObject or target is null. Check the Move component setup.", MessageType.Warning);
+
+                return;
+            }
+
             // Begin checking for changes
             EditorGUI.BeginChangeCheck();
 
@@ -70,7 +155,7 @@ namespace SOSXR.SimpleHelpers.Editor
                 case ActionToTake.SyncTransform:
                 case ActionToTake.MoveTowards:
                 case ActionToTake.LookAt:
-                case ActionToTake.RotateTowards:
+                case ActionToTake.SmoothLookAtTarget:
                 case ActionToTake.SmoothMoveTowards:
                 case ActionToTake.MoveInCircle:
                 case ActionToTake.SmoothFollow:
@@ -85,23 +170,29 @@ namespace SOSXR.SimpleHelpers.Editor
             {
                 case ActionToTake.MoveTowards:
                 case ActionToTake.SmoothMoveTowards:
-                case ActionToTake.RotateTowards:
+                case ActionToTake.SmoothLookAtTarget:
                     DrawVelocityField();
 
                     break;
 
                 case ActionToTake.MoveByOffset:
+                    DrawVelocityField();
                     DrawOffsetField();
 
                     break;
 
                 case ActionToTake.MoveAlongPath:
-                    DrawBezierPathFields();
+                    DrawNotImplementedMessage();
+                    // DrawVelocityField();
+                    // DrawBezierPathFields();
+                    // DrawBezierLoopField();
 
                     break;
 
                 case ActionToTake.MoveInLocalSpace:
-                    DrawLocalMoveSpeedField();
+                    DrawNotImplementedMessage();
+                    // DrawVector3OptionsField(); 
+                    // DrawVelocityField();
 
                     break;
 
@@ -111,17 +202,19 @@ namespace SOSXR.SimpleHelpers.Editor
                     break;
 
                 case ActionToTake.MoveSinusoidally:
-                    DrawSinusoidalFields();
+                    DrawNotImplementedMessage();
+                    // DrawSinusoidalFields();
 
                     break;
 
-                case ActionToTake.BounceBackAndForth:
+                case ActionToTake.SmoothBounceBackAndForth:
                     DrawBounceFields();
 
                     break;
 
                 case ActionToTake.MoveWithElasticity:
-                    DrawElasticityFields();
+                    DrawNotImplementedMessage();
+                    // DrawElasticityFields();
 
                     break;
 
@@ -140,6 +233,25 @@ namespace SOSXR.SimpleHelpers.Editor
         }
 
 
+        private void DrawVector3OptionsField()
+        {
+            // I want an enum dropdown here
+            // I want to be able to select from a list of Vector3 options
+        }
+
+
+        private void DrawNotImplementedMessage()
+        {
+            EditorGUILayout.HelpBox("This feature is not yet implemented.", MessageType.Warning);
+        }
+
+
+        private void DrawBezierLoopField()
+        {
+            EditorGUILayout.PropertyField(bezierLoopProp, new GUIContent("Loop Path"));
+        }
+
+
         // Existing drawing methods remain the same, but use cached properties
         private void DrawTargetField()
         {
@@ -152,7 +264,7 @@ namespace SOSXR.SimpleHelpers.Editor
             EditorGUILayout.PropertyField(velocityProp, new GUIContent("Velocity"));
 
             // Rotation speed for RotateTowards
-            if (actionToTakeProp.enumValueIndex == (int) ActionToTake.RotateTowards)
+            if (actionToTakeProp.enumValueIndex == (int) ActionToTake.SmoothLookAtTarget)
             {
                 EditorGUILayout.PropertyField(rotationSpeedProp, new GUIContent("Rotation Speed"));
             }
@@ -175,12 +287,6 @@ namespace SOSXR.SimpleHelpers.Editor
         private void DrawBezierPathFields()
         {
             EditorGUILayout.PropertyField(bezierPointsProp, new GUIContent("Bezier Points"));
-        }
-
-
-        private void DrawLocalMoveSpeedField()
-        {
-            EditorGUILayout.PropertyField(localMoveSpeedProp, new GUIContent("Local Move Speed"));
         }
 
 
@@ -215,8 +321,7 @@ namespace SOSXR.SimpleHelpers.Editor
 
         private void DrawHeightConstraintsFields()
         {
-            EditorGUILayout.PropertyField(minimumHeightProp, new GUIContent("Minimum Height"));
-            EditorGUILayout.PropertyField(maximumHeightProp, new GUIContent("Maximum Height"));
+            EditorGUILayout.PropertyField(heightConstraintsProp, new GUIContent("Height Constraints"));
         }
     }
 }
