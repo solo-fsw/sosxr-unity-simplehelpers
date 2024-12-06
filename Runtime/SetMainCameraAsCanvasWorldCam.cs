@@ -37,10 +37,15 @@ namespace SOSXR.SimpleHelpers
 
         private void AssignWorldCamera()
         {
-            if (canvas.worldCamera != null || Camera.main == null)
+            if (canvas.worldCamera != null)
             {
                 enabled = false; // Disable component if no action is needed
 
+                return;
+            }
+
+            if (Camera.main == null)
+            {
                 return;
             }
 

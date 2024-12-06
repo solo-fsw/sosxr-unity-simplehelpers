@@ -32,8 +32,8 @@ namespace SOSXR.SimpleHelpers
         [SerializeField] private Vector2 m_heightConstraints = new(-10f, 10f);
         [SerializeField] [Range(0f, 5f)] private float m_smoothTime = 1.5f;
 
-        public bool m_bezierLoop = true; 
-        
+        public bool m_bezierLoop = true;
+
         private float m_bezierT = 0f;
         private float m_orbitAngle = 0f;
         private float m_time;

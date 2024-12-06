@@ -1,8 +1,8 @@
 using System.Linq;
+using UnityEngine;
 #if SOSXR_EDITORTOOLS_INSTALLED
 using SOSXR.EditorTools;
 #endif
-using UnityEngine;
 
 
 namespace SOSXR.SimpleHelpers

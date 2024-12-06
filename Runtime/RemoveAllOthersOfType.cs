@@ -1,8 +1,8 @@
 using System;
+using UnityEngine;
 #if SOSXR_EDITORTOOLS_INSTALLED
 using SOSXR.EditorTools;
 #endif
-using UnityEngine;
 
 
 namespace SOSXR.SimpleHelpers
@@ -13,10 +13,9 @@ namespace SOSXR.SimpleHelpers
         Destroy
     }
 
+
     public class RemoveAllOthersOfType : MonoBehaviour
     {
-     
-
         [SerializeField] private bool m_autoRemoveOnAwake = true;
         [Tooltip("Drag a component of the type you want to control.")]
         #if SOSXR_EDITORTOOLS_INSTALLED
